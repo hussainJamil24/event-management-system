@@ -8,6 +8,13 @@ A full-stack Event Management System developed using:
 - MySQL
 - JWT Authentication
 
+## Documentation
+
+- Software Requirements Specification
+- Entity Relationship Diagram
+
+![ER Diagram](docs/database/er-diagram.png)
+
 ## Features
 
 - User Authentication
