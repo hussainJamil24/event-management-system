@@ -1,9 +1,14 @@
 from fastapi import FastAPI
 from sqlalchemy import text
 
-from app.core.database import engine
+from app.core.database import Base, engine
+import app.models
 
 app = FastAPI()
+
+@app.on_event("startup")
+def startup():
+    Base.metadata.create_all(bind=engine)
 
 @app.get("/")
 def root():
