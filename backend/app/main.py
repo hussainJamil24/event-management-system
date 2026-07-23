@@ -1,10 +1,12 @@
 from fastapi import FastAPI
 from sqlalchemy import text
 
+from app.api import auth
 from app.core.database import Base, engine
-import app.models
 
 app = FastAPI()
+
+app.include_router(auth.router)
 
 @app.on_event("startup")
 def startup():

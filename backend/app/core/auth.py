@@ -17,9 +17,7 @@ from app.models.user import User
 from app.core.security import verify_password
 
 
-oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl="/login",
-)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 def create_access_token(
     data: dict,

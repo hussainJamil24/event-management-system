@@ -1,38 +1,36 @@
-from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
-from app.schemas.user import UserCreate
+from sqlalchemy.orm import Session
+
+from app.core.security import hash_password, verify_password
+
+from app.schemas.user import UserCreate, UserUpdate
+
 from app.crud.user import (
-    create_user,
+    create_user as crud_create_user,
     get_user_by_email,
     get_user_by_id,
-    UserUpdate,
-    update_user,
-    update_user,
+    update_user
 )
-from app.core.security import hash_password, verify_password
-from app.core.security import hash_password, verify_password
-from app.crud.user import get_user_by_id, update_password
 
-def register_user(db: Session, user: UserCreate):
-    # Check if the user already exists
-    db_user = get_user_by_email(db, user.email)
+def create_user(
+    db: Session,
+    user_create: UserCreate,
+):
+    db_user = get_user_by_email(db, user_create.email)
+
     if db_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered",
         )
 
-    # Hash the password
-    hashed_password = hash_password(user.password)
+    hashed_password = hash_password(user_create.password)
 
-    # Create the user
-    new_user = create_user(
-        db=db,
-        user_create=user,
+    return crud_create_user(
+       db=db,
+        user=user_create,
         hashed_password=hashed_password,
     )
-
-    return new_user
 
 def login_user(db: Session, email: str, password: str):
     # Find the user by email
@@ -85,11 +83,11 @@ def change_password(
     hashed_password = hash_password(new_password)
 
     # Update password through the CRUD layer
-    return update_password(
-        db=db,
-        db_user=db_user,
-        hashed_password=hashed_password,
-    )
+    # return update_password(
+    #     db=db,
+    #     db_user=db_user,
+    #     hashed_password=hashed_password,
+    # )
 
 def update_user_info(
     db: Session,
