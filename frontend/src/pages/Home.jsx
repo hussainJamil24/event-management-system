@@ -1,29 +1,35 @@
 import { useAuth } from "../context/AuthContext";
+import Navbar from "../components/Navbar";
 
 export default function Home() {
 
      const { user, logout } = useAuth();
 
     return (
-        <div className="container py-5">
+        <>
+            <Navbar />
 
-            <h1>Welcome to EventHub</h1>
+            <div className="container py-5">
 
-            <p>
-                Hello, {user?.first_name} {user?.last_name}!
-            </p>
+                <h1>Welcome to EventHub</h1>
 
-            <p>
-                Email: {user?.email}
-            </p>
+                <p>
+                    Hello, {user?.first_name} {user?.last_name}!
+                </p>
 
-            <button
-                className="btn eventhub-button"
-                onClick={logout}
-            >
-                Logout
-            </button>
+                <p>
+                    Email: {user?.email}
+                </p>
 
-        </div>
+                <button
+                    className="btn eventhub-button"
+                    onClick={logout}
+                >
+                    Logout
+                </button>
+
+            </div>
+        </>
+        
     )
 }

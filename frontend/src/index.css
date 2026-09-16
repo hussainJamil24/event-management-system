@@ -27,3 +27,102 @@ code {
   background-color:#ffff;
   color:#002147;
 }
+
+/* Navbar style */
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navigation-links li a {
+  text-decoration: none;
+  color: #002147;
+}
+
+.navbar-container {
+  width: 100%;
+  min-height: 60px;
+}
+
+.eventhub-logo{
+  width: 20%;
+  display: flex;
+  justify-content: space-around;
+  align-items:center ;
+}
+
+.navigation {
+  width: 25%;
+  display: flex;
+   justify-content:center;
+  align-items:center ;
+}
+
+.navigation-links {
+  width: 100%;
+  display: flex;
+  justify-content:space-evenly;
+  align-items:center ;
+}
+
+.navigation-links li a {
+  padding-bottom: 5px;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.navigation-links li a:hover {
+  color: #008080;
+  border-bottom-color: #008080;
+}
+
+.search {
+  width: 35%;
+  position: relative;
+  display: flex;
+  justify-content:center;
+  align-items:center ;
+}
+
+.search i {
+  position: absolute;
+  left: 12px;
+  color: #6c757d;
+}
+
+.search input {
+  width: 100%;
+  padding:8px 12px 8px 40px;
+  outline: none;
+  border: none;
+  border:2px solid #EFF1F3;
+  border-radius: 8px;
+}
+
+.search input:focus {
+  border-color: #008080
+}
+
+.authentication {
+  width: 20%;
+  display: flex;
+  justify-content:space-evenly;
+  align-items:center ;
+}
+
+.authentication button {
+  border: none;
+  color: #002147;
+  padding:6px 18px ;
+  border-radius: 8px;
+}
+
+.authentication .join {
+  background:#008080;
+  border: none;
+  color: #ffff;
+  padding:6px 18px ;
+  border-radius: 8px;
+}
+
