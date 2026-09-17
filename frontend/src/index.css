@@ -126,3 +126,104 @@ ul {
   border-radius: 8px;
 }
 
+/* hero section */
+.hero-section {
+  background-color: #002147;
+  padding: 50px 20px 35px;
+}
+
+.hero-title {
+  color: #ffff;
+  margin-bottom: 15px;
+}
+
+.hero-descripton {
+  color:#93ACDA;
+  margin-bottom: 30px;
+}
+
+.event-search {
+  background-color: #f0efff;
+  border: 6px solid #163661;
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.event-cont {
+  min-height: 70px;
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid #d5d6e5;
+}
+
+.event-cont label{
+   margin-bottom: 4px;
+  color: #747779;
+  font-size: 13px;
+}
+
+.event-cont input, .event-cont select {
+  width: 100%;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  color: #002147;
+  font-weight: 500;
+}
+
+.event-cont input::placeholder {
+  color: #b5b7c9;
+}
+
+.event-cont select {
+  cursor: pointer;
+}
+
+.button-container {
+  padding: 8px 12px;
+}
+
+.find-events {
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  background-color: #008080;
+  color: white;
+  font-weight: 600;
+}
+
+.find-events:hover {
+  background-color: #007985;
+}
+
+.find-events i {
+  margin-right: 8px;
+}
+
+/* media qu */
+@media (min-width: 768px) {
+  .event-cont.button-container {
+      border-right: none;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .event-search {
+      padding: 8px;
+  }
+
+  .event-cont {
+      min-height: 65px;
+      padding: 8px 12px;
+      border-right: none;
+  }
+
+  .button-container {
+      padding-top: 10px;
+  }
+
+}
