@@ -160,7 +160,7 @@ ul {
 }
 
 .event-cont label{
-   margin-bottom: 4px;
+  margin-bottom: 4px;
   color: #747779;
   font-size: 13px;
 }
@@ -202,6 +202,57 @@ ul {
 
 .find-events i {
   margin-right: 8px;
+}
+
+/* events section */
+.events-section {
+  background-color: #ECF0FF;
+}
+
+/* filterSidebar */
+.filter-sidebar {
+  margin: 5px 10px;
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.filter-card {
+  background-color: #FFFFFF;
+  padding:20px ;
+  border-radius: 15px;
+  box-shadow: 5px 5px 5px #C4C7C9;
+}
+
+.filter-title i {
+ color: #143057; 
+}
+
+.form-select {
+  background-color:#D6E3FF;
+  border: 2px solid #9EACC3;
+}
+
+ .form-select:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: #dee2e6;
+}
+
+.help-card {
+  background-color: #ADFFFE;
+  padding:15px;
+  border-radius: 15px;
+  border: 2px solid #76D6D5;
+}
+
+.help-card h6, .help-card a {
+  color: #0F8584;
+}
+
+.help-card a {
+  text-decoration: none;
 }
 
 /* media qu */
