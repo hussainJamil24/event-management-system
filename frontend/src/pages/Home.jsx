@@ -2,6 +2,7 @@ import Navbar from "../components/Navbar";
 import HeroSection from "../components/Home/HeroSection";
 import FilterSidebar  from "../components/Home/FilterSidebar";
 import EventReults  from "../components/Home/EventResults";
+import Footer from "../components/Home/Footer";
 
 export default function Home() {
     return (
@@ -26,7 +27,9 @@ export default function Home() {
                 </div>
 
             </div>
-            
+
+            {/* footer */}
+            <Footer />
         </>
         
     );
