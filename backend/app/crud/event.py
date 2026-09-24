@@ -2,6 +2,7 @@ from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from app.models.event import Event
+from app.models.category import Category
 from app.schemas.event import EventCreate, EventUpdate
 
 
@@ -47,6 +48,8 @@ def get_event_by_id(
 def get_all_events(
     db: Session,
     search: str | None = None,
+    category: str | None = None,
+    location: str | None = None,
 ) -> list[Event]:
     query = db.query(Event)
 
@@ -59,6 +62,22 @@ def get_all_events(
                 Event.description.ilike(search_term),
                 Event.location.ilike(search_term),
             )
+        )
+
+    # Category filter
+    if category:
+        query = (
+            query
+            .join(Event.category)
+            .filter(Category.name.ilike(category))
+        )
+
+    # Location filter
+    if location:
+        location_term = f"%{location}%"
+
+        query = query.filter(
+            Event.location.ilike(location_term)
         )
 
     return (

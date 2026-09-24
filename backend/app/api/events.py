@@ -53,11 +53,25 @@ def read_all_events(
         min_length=1,
         max_length=100,
     ),
+
+    category: str | None = Query(
+        default=None,
+        min_length=1,
+        max_length=100,
+    ),
+
+    location: str | None = Query(
+        default=None,
+        min_length=1,
+        max_length=100,
+    ),
     db: Session = Depends(get_db),
 ):
     return get_all_events(
         db =db,
         search=search,
+        category=category,
+        location=location,
     )
 
 
