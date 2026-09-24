@@ -1,4 +1,5 @@
 from datetime import date, time
+from app.models.category import Category
 
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -43,6 +44,23 @@ def setup_database():
     Base.metadata.create_all(bind=engine)
 
     db = TestingSessionLocal()
+
+    technology = Category(
+        name="Technology",
+        description="Technology related events.",
+    )
+
+    business = Category(
+        name="Business",
+        description="Business related events.",
+    )
+
+    db.add_all([
+        technology,
+        business,
+    ])
+
+    db.commit()
 
     event_1 = Event(
         organizer_id=1,
@@ -111,6 +129,67 @@ def test_get_all_events_without_search():
     assert data[0]["title"] == "AI Conference 2026"
     assert data[1]["title"] == "Web Development Workshop"
     assert data[2]["title"] == "Business Leadership Seminar"
+
+    teardown_database()
+
+
+def test_get_events_with_category_filter():
+    setup_database()
+
+    response = client.get(
+        "/events/",
+        params={"category": "Technology"},
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert len(data) == 2
+    assert data[0]["title"] == "AI Conference 2026"
+    assert data[1]["title"] == "Web Development Workshop"
+
+    teardown_database()
+
+
+def test_get_events_with_location_filter():
+    setup_database()
+
+    response = client.get(
+        "/events/",
+        params={"location": "Nicosia"},
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert len(data) == 1
+    assert data[0]["title"] == "AI Conference 2026"
+    assert data[0]["location"] == "Nicosia"
+
+    teardown_database()
+
+
+def test_get_events_with_combined_filters():
+    setup_database()
+
+    response = client.get(
+        "/events/",
+        params={
+            "search": "AI",
+            "category": "Technology",
+            "location": "Nicosia",
+        },
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert len(data) == 1
+    assert data[0]["title"] == "AI Conference 2026"
+    assert data[0]["location"] == "Nicosia"
 
     teardown_database()
 
