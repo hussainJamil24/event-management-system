@@ -90,8 +90,12 @@ def get_event(
 
 def get_all_events(
     db: Session,
+    search: str | None = None,
 ) -> list[Event]:
-    return crud_get_all_events(db)
+    return crud_get_all_events(
+        db=db,
+        search=search,
+    )
 
 
 def get_events_by_category(

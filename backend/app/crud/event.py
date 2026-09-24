@@ -1,3 +1,4 @@
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from app.models.event import Event
@@ -45,9 +46,23 @@ def get_event_by_id(
 
 def get_all_events(
     db: Session,
+    search: str | None = None,
 ) -> list[Event]:
+    query = db.query(Event)
+
+    if search:
+        search_term = f"%{search}%"
+
+        query = query.filter(
+            or_(
+                Event.title.ilike(search_term),
+                Event.description.ilike(search_term),
+                Event.location.ilike(search_term),
+            )
+        )
+
     return (
-        db.query(Event)
+        query
         .order_by(Event.event_date)
         .all()
     )

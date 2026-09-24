@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, Query, Response, status
 from sqlalchemy.orm import Session
 
 from app.core.auth import get_current_user
@@ -48,9 +48,17 @@ def create_new_event(
     response_model=List[EventResponse],
 )
 def read_all_events(
+    search: str | None = Query(
+        default=None,
+        min_length=1,
+        max_length=100,
+    ),
     db: Session = Depends(get_db),
 ):
-    return get_all_events(db)
+    return get_all_events(
+        db =db,
+        search=search,
+    )
 
 
 @router.get(
