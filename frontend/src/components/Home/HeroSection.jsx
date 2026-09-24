@@ -1,4 +1,8 @@
-export default function HeroSection() {
+export default function HeroSection({ filters, onFilterChange, onClearFilters }) {
+    const handleSubmit = (event) => {
+        event.preventDefault();
+    };
+
     return(
         <section className="hero-section container-fluid">
             {/* hero text */}
@@ -12,13 +16,18 @@ export default function HeroSection() {
             {/* search form */}
             <div className="row justify-content-center">
                 <div className="col-12 col-md-10 col-lg-9 col-xl-8 col-xxl-7">
-                    <div className="event-search">
+                    <form className="event-search"
+                        onSubmit={handleSubmit}
+                    >
                         <div className="row align-items-center g-0">
                             {/* Event Name */}
                             <div className="col-12 col-md-3">
                                 <div className="event-cont">
                                     <label className="fw-semibold">Event Name</label>
-                                    <input className="fw-normal" type="text" placeholder="e.g AI Summit"/>
+                                    <input className="fw-normal" type="text" placeholder="e.g AI Summit"
+                                        value={filters.search} 
+                                        onChange={ (event)  => onFilterChange("search", event.target.value) }
+                                    />
                                 </div>
                             </div>
 
@@ -26,11 +35,28 @@ export default function HeroSection() {
                             <div className="col-12 col-md-3">
                                 <div className="event-cont">
                                     <label className="fw-semibold">CATEGORY</label>
-                                    <select>
-                                        <option>All Categories</option>
-                                        <option>Technology</option>
-                                        <option>Business</option>
-                                        <option>Marketing</option>
+                                    <select
+                                        value={filters.category}
+                                        onChange={(event) => 
+                                            onFilterChange( "category", event.target.value)
+                                        }
+                                    >
+                                        <option value="">
+                                            All Categories
+                                        </option>
+
+                                        <option value="Technology">
+                                            Technology
+                                        </option>
+
+                                        <option value="Business">
+                                            Business
+                                        </option>
+
+                                        <option  value="Marketing">
+                                            Marketing
+                                        </option>
+
                                     </select>
                                 </div>
                             </div>
@@ -39,23 +65,35 @@ export default function HeroSection() {
                             <div className="col-12 col-md-3">
                                 <div className="event-cont">
                                     <label className="fw-semibold">Location</label>
-                                    <input className="fw-normal" type="text" placeholder="New York, NY"/>
+                                    <input className="fw-normal" type="text" placeholder="New York, NY"
+                                        value={filters.location}
+                                        onChange={(event) => 
+                                            onFilterChange("location", event.target.value)
+                                        }
+                                    />
                                 </div>
                             </div>
 
                             {/* button */}
                             <div className="col-12 col-md-3">
                                 <div className="event-cont button-container">
-                                    <button  className="find-events">
+                                    <button type="submit"  className="find-events">
                                         <i className="bi bi-search"></i>
                                         Find Events
                                     </button>
+
+                                    <button type="button" className="find-events mt-2"
+                                        onClick={onClearFilters}
+                                    >
+                                        Clear Filters
+                                    </button>
+
                                 </div>
                             </div>
 
                         </div>
 
-                    </div>
+                    </form>
 
                 </div>
 

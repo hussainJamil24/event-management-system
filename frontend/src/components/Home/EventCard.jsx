@@ -1,14 +1,21 @@
-import eventTechIage from "../../images/event-tech.jpg"
-export default function EventCard() {
+export default function EventCard({event}) {
     return(
         <div className="event-card">
             {/* event image */}
             <div className="event-image-container">
-                <img src={eventTechIage} alt="Tech Conference" className="event-image"/>
+                <img src={ event.image || "https://via.placeholder.com/600x400?text=Event"} 
+                    alt={event.title} className="event-image"
+                    style={{
+                        height: "200px", objectFit: "cover",
+                    }}
+                />
+
                 <span className="event-category">TECHNOLOGY</span>
+
                 <button className="favorite-button">
                     <i className="bi bi-heart"></i>
                 </button>
+
             </div>
 
             {/* event information */}
@@ -16,24 +23,30 @@ export default function EventCard() {
                 {/* date */}
                 <div className="event-date">
                     <i className="bi bi-calendar"></i>
-                    <span>Oct 15, 2024</span>
+
+                    <span>{event.event_date}</span>
+
                 </div>
 
                 {/* title */}
                 <div className="event-card-title">
-                    <h6>Tech Conference 2024: The AI Frontier</h6>
+                    <h6>{event.title}</h6>
 
                     {/* location */}
                     <div  className="event-location">
                         <i className="bi bi-geo-alt"></i>
-                        <span>New York, NY</span>
+
+                        <span>{event.location}</span>
+
                     </div>
 
                     {/* seats */}
                     <div className="event-seats">
                         <div className="seats-info">
                             <span>SEATS</span>
-                            <strong>120/150</strong>
+
+                            <strong>{event.available_seats}</strong>
+
                         </div>
 
                         <div className="seat-progress">
