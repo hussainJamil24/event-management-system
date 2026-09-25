@@ -1,6 +1,6 @@
 import EventCard from "./EventCard";
 
-export default function EventResults({events, loading, error}) {
+export default function EventResults({events, loading, error, viewMode, onViewModeChange}) {
     return(
         <section className="event-results">
             {/* results header */}
@@ -11,12 +11,16 @@ export default function EventResults({events, loading, error}) {
                 </div>
 
                 <div className="view-buttons">
-                    <button className="active">
+                    <button className={viewMode === "grid" ? "active" : ""}
+                        onClick={() => onViewModeChange("grid")}
+                    >
                         <i className="bi bi-grid-3x3-gap"></i>
                         Grid
                     </button>
 
-                    <button className="active">
+                    <button className={viewMode === "calendar" ? "active" : ""}
+                        onClick={() => onViewModeChange("calendar")}
+                    >
                     <i className="bi bi-calendar3"></i>
                     Calendar
                     </button>
@@ -60,8 +64,8 @@ export default function EventResults({events, loading, error}) {
                 </div>
             )}
 
-            {/* events */}
-            {!loading && !error && events.length > 0 && (
+            {/* events grid view */}
+            {!loading && !error && events.length > 0 && viewMode === "grid" && (
                 <div className="row g-4">
                     {events.map((event)=> (
                         <div className="col-12 col-md-6 col-xl-4" key={event.id}>
@@ -70,6 +74,8 @@ export default function EventResults({events, loading, error}) {
                     ))}
                 </div>
             )}
+
+            {/* events calendar view */}
 
             {/* load more */}
             {!loading && events.length > 0 && (

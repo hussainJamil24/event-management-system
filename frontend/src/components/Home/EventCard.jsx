@@ -1,4 +1,12 @@
+import { useState } from "react";
+
 export default function EventCard({event}) {
+    const [favorite, setFavorite] = useState(false);
+
+    const handleFavorite = () => {
+        setFavorite((previous) => !previous);
+    };
+
     return(
         <div className="event-card">
             {/* event image */}
@@ -12,8 +20,11 @@ export default function EventCard({event}) {
 
                 <span className="event-category">TECHNOLOGY</span>
 
-                <button className="favorite-button">
-                    <i className="bi bi-heart"></i>
+                <button className="favorite-button"
+                    onClick={handleFavorite}
+                    aria-label={favorite ? "Remove from favorites" : "Add to favorites"}
+                >
+                    <i className={favorite ? "bi bi-heart-fill" :  "bi bi-heart"}></i>
                 </button>
 
             </div>

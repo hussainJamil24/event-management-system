@@ -12,14 +12,17 @@ export default function Home() {
     // Filter state
     const [filters, setFilters] = useState({
         search: "",
-        category: "",
+        categories: [],
         location: "",
+        timeframe: "this_month",
+        hideSoldOut: false,
     });
 
     // Events state
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [viewMode, setViewMode] = useState("grid");
 
     // Fetch  events
     const fetchEvents = async (currentFilters) => {
@@ -33,12 +36,20 @@ export default function Home() {
                 params.search = currentFilters.search.trim();
             }
 
-            if (currentFilters.category) {
-                params.category = currentFilters.category;
+            if (currentFilters.categories.length > 0) {
+                params.category = currentFilters.categories.join(",");
             }
 
              if (currentFilters.location.trim()) {
                 params.location = currentFilters.location.trim();
+            }
+
+            if (currentFilters.timeframe) {
+                params.timeframe = currentFilters.timeframe;
+            }
+
+            if (currentFilters.hideSoldOut) {
+                params.hide_sold_out = true;
             }
 
             const response = await api.get("/events/", {
@@ -75,8 +86,10 @@ export default function Home() {
     const handleClearFilters = () => {
        setFilters ({
             search: "",
-            category: "",
+            categories: [],
             location: "",
+            timeframe: "",
+            hideSoldOut: false,
         });
     };
 
@@ -95,7 +108,10 @@ export default function Home() {
                 <div className="row">
                     {/* filter sidebar */}
                     <div className="col-12 col-lg-3">
-                        <FilterSidebar/>
+                        <FilterSidebar 
+                            filters={filters}
+                            onFilterChange={handleFilterChange}
+                        />
                     </div>
 
                     {/* events */}
@@ -103,6 +119,8 @@ export default function Home() {
                         <EventReults events={events}
                             loading={loading}
                             error={error}
+                            viewMode={viewMode}
+                            onViewModeChange={setViewMode}
                         />
                     </div>
 

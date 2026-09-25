@@ -1,4 +1,23 @@
-export default function FilterSidebar() {
+export default function FilterSidebar({filters, onFilterChange}) {
+    const handleCategoryChange = (category) => {
+        const currentCategories = filters.categories;
+
+        if (currentCategories.includes(category)) {
+            onFilterChange(
+                "categories",
+                currentCategories.filter(
+                    (item) => item !== category
+                )
+            );
+        } else {
+            onFilterChange(
+                "categories",
+                [...currentCategories, category]
+            );
+        }
+    };
+
+
     return(
         <div className="filter-sidebar">
             {/* filter card */}
@@ -13,23 +32,35 @@ export default function FilterSidebar() {
                     <label className="filter-label fw-lighter fs-5 mb-2">CATEGORIES</label>
 
                     <div className="form-check">
-                        <input  className="form-check-input" type="checkbox" id="technology"/>
+                        <input  className="form-check-input" type="checkbox" id="technology"
+                            checked={filters.categories.includes("Technology")}
+                            onChange={() => handleCategoryChange("Technology")}
+                        />
                         <label  className="form-check-label" htmlFor="technology">Technology</label>
                     </div>
 
                     <div className="form-check">
-                        <input className="form-check-input" type="checkbox" id="design"/>
+                        <input className="form-check-input" type="checkbox" id="design"
+                            checked={filters.categories.includes("Design")}
+                            onChange={() => handleCategoryChange("Design")}
+                        />
                         <label  className="form-check-label" htmlFor="design">Design</label>
 
                     </div>
 
                     <div className="form-check">
-                        <input className="form-check-input" type="checkbox" id="marketing"/>
+                        <input className="form-check-input" type="checkbox" id="marketing"
+                            checked={filters.categories.includes("Marketing")}
+                            onChange={() => handleCategoryChange("Marketing")}
+                        />
                         <label className="form-check-label" htmlFor="marketing">Marketing</label>
                     </div>
 
                     <div className="form-check">
-                        <input className="form-check-input" type="checkbox" id="finance"/>
+                        <input className="form-check-input" type="checkbox" id="finance"
+                            checked={filters.categories.includes("Finance")}
+                            onChange={() => handleCategoryChange("Finance")}
+                        />
                         <label className="form-check-label" htmlFor="finance">Finance</label>
                     </div>
 
@@ -39,10 +70,13 @@ export default function FilterSidebar() {
                 <div className="filter-group">
                     <label className="filter-label fw-lighter fs-5 mb-2" htmlFor="timeframe">TIMEFRAME</label>
 
-                    <select className="form-select" id="timeframe">
-                        <option>This Month</option>
-                        <option>Next 3 Month</option>
-                        <option>This Year</option>
+                    <select className="form-select" id="timeframe"
+                        value={filters.timeframe}
+                        onChange={(event) => onFilterChange("timeframe", event.target.value)}
+                    >
+                        <option value="this_month">This Month</option>
+                        <option value="next_3_months">Next 3 Month</option>
+                        <option value="this_year">This Year</option>
                     </select>
 
                 </div>
@@ -52,7 +86,10 @@ export default function FilterSidebar() {
                     <label className="filter-label fw-lighter fs-5 mb-2" htmlFor="timeframe">AVILABILITY</label>
 
                     <div className="form-check">
-                        <input className="form-check-input" type="checkbox" id="soldOut"/>
+                        <input className="form-check-input" type="checkbox" id="soldOut"
+                            checked={filters.hideSoldOut}
+                             onChange={(event) =>  onFilterChange("hideSoldOut", event.target.checked)}
+                        />
                         <label className="form-check-label" htmlFor="soldOut">Hide sold out</label>
                     </div>
 
