@@ -14,7 +14,7 @@ export default function Home() {
         search: "",
         categories: [],
         location: "",
-        timeframe: "this_month",
+        timeframe: "",
         hideSoldOut: false,
     });
 
@@ -32,25 +32,32 @@ export default function Home() {
 
             const params = {};
 
+            // Search
             if (currentFilters.search.trim()) {
                 params.search = currentFilters.search.trim();
             }
 
+            // categories
             if (currentFilters.categories.length > 0) {
-                params.category = currentFilters.categories.join(",");
+                params.category = currentFilters.categories;
             }
 
-             if (currentFilters.location.trim()) {
+            // location
+            if (currentFilters.location.trim()) {
                 params.location = currentFilters.location.trim();
             }
 
+            // timeframe
             if (currentFilters.timeframe) {
                 params.timeframe = currentFilters.timeframe;
             }
 
+            // Availability
             if (currentFilters.hideSoldOut) {
                 params.hide_sold_out = true;
             }
+
+            console.log("Event filters:", params);
 
             const response = await api.get("/events/", {
                 params: params,

@@ -75,7 +75,7 @@ export default function FilterSidebar({filters, onFilterChange}) {
                         onChange={(event) => onFilterChange("timeframe", event.target.value)}
                     >
                         <option value="this_month">This Month</option>
-                        <option value="next_3_months">Next 3 Month</option>
+                        <option value="next_month">Next Month</option>
                         <option value="this_year">This Year</option>
                     </select>
 
