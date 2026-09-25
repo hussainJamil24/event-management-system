@@ -91,14 +91,18 @@ def get_event(
 def get_all_events(
     db: Session,
     search: str | None = None,
-    category: str | None = None,
+    categories: list[str] | None = None,
     location: str | None = None,
+    timeframe: str | None = None,
+    hide_sold_out: bool = False,
 ) -> list[Event]:
     return crud_get_all_events(
         db=db,
         search=search,
-        category=category,
+        categories=categories,
         location=location,
+        timeframe=timeframe,
+        hide_sold_out=hide_sold_out,
     )
 
 

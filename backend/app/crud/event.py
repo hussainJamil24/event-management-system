@@ -1,5 +1,7 @@
 from sqlalchemy import or_
+from datetime import date
 from sqlalchemy.orm import Session
+from dateutil.relativedelta import relativedelta
 
 from app.models.event import Event
 from app.models.category import Category
@@ -48,11 +50,14 @@ def get_event_by_id(
 def get_all_events(
     db: Session,
     search: str | None = None,
-    category: str | None = None,
+    categories: list[str] | None = None,
     location: str | None = None,
+    timeframe: str | None = None,
+    hide_sold_out: bool = False,
 ) -> list[Event]:
     query = db.query(Event)
 
+    #  Search filter
     if search:
         search_term = f"%{search}%"
 
@@ -65,11 +70,11 @@ def get_all_events(
         )
 
     # Category filter
-    if category:
+    if categories:
         query = (
             query
             .join(Event.category)
-            .filter(Category.name.ilike(category))
+            .filter(Category.name.in_(categories))
         )
 
     # Location filter
@@ -80,6 +85,47 @@ def get_all_events(
             Event.location.ilike(location_term)
         )
 
+    # Timeframe filter
+    today = date.today()
+
+    if timeframe == "this_month":
+        start_date = today.replace(day=1)
+
+        if today.month == 12:
+            next_month = date(today.year + 1, 1, 1)
+        else:
+            next_month = date( today.year, today.month + 1, 1)
+
+        query = query.filter(
+            Event.event_date >= start_date,
+            Event.event_date < next_month,
+        )
+
+    elif timeframe == "next_month":
+        start_date = today.replace(day=1) + relativedelta(months=1)
+        end_date = start_date + relativedelta(months=1)
+
+        query = query.filter(
+            Event.event_date >= start_date,
+            Event.event_date < end_date,
+        )
+
+    elif timeframe == "this_year":
+        start_date = date(today.year, 1, 1)
+
+        end_date = date(today.year + 1, 1, 1)
+
+        query = query.filter(
+            Event.event_date >= start_date,
+            Event.event_date < end_date,
+        )
+
+
+    # Availability filter
+    if hide_sold_out:
+        query = query.filter( Event.available_seats > 0)
+
+    # Sort by event date
     return (
         query
         .order_by(Event.event_date)

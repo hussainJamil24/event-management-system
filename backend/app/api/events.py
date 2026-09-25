@@ -53,25 +53,30 @@ def read_all_events(
         min_length=1,
         max_length=100,
     ),
-
-    category: str | None = Query(
+    category: list[str] | None = Query(
         default=None,
-        min_length=1,
-        max_length=100,
     ),
-
     location: str | None = Query(
         default=None,
         min_length=1,
         max_length=100,
     ),
+    timeframe: str | None = Query(
+        default=None,
+    ),
+    hide_sold_out: bool = Query(
+        default=False,
+    ),
+
     db: Session = Depends(get_db),
 ):
     return get_all_events(
         db =db,
         search=search,
-        category=category,
+        categories=category,
         location=location,
+        timeframe=timeframe,
+        hide_sold_out=hide_sold_out,
     )
 
 
