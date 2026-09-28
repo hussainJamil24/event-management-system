@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function EventCard({event}) {
     const [favorite, setFavorite] = useState(false);
@@ -67,7 +68,7 @@ export default function EventCard({event}) {
                     </div>
 
                     {/* details button */}
-                        <button className="view-details"> View Details</button>
+                        <Link to={`/events/${event.id}`} className="view-details"> View Details</Link>
 
                 </div>
 

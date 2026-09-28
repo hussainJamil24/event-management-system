@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-export default function Navbar() {
+export default function Navbar({showSearch = true, showJoin = true, showProfile = false, navbarClassName = ""}) {
     const {isAuthenticated, logout} = useAuth();
     return (
-        <nav className="navbar-container shadow-sm px-2 px-md-4">
+        <nav className={`navbar-container shadow-sm px-2 px-md-4 ${navbarClassName}`}>
 
             <div className="container-fluid">
 
@@ -43,29 +43,42 @@ export default function Navbar() {
                                     </Link>
                                 </li>
 
-                                <li>
-                                    <Link
-                                        to="/pricing"
-                                        className="fw-semibold"
-                                    >
-                                        Pricing
-                                    </Link>
-                                </li>
+                                {showProfile ? (
+                                    <li>
+                                        <Link
+                                            to="/profile"
+                                            className="fw-semibold"
+                                        >
+                                            Profile
+                                        </Link>
+                                    </li>
+                                ) : (
+                                    <li>
+                                        <Link
+                                            to="/pricing"
+                                            className="fw-semibold"
+                                        >
+                                            Pricing
+                                        </Link>
+                                    </li>
+                                )}
                             </ul>
                         </div>
                     </div>
 
 
                     {/* Search */}
-                    <div className="col-12 col-md-4 col-lg-3">
-                        <div className="search">
-                            <i className="bi bi-search"></i>
-                            <input
-                                type="text"
-                                placeholder="Search events..."
-                            />
+                    {showSearch && (
+                        <div className="col-12 col-md-4 col-lg-3">
+                            <div className="search">
+                                <i className="bi bi-search"></i>
+                                <input
+                                    type="text"
+                                    placeholder="Search events..."
+                                />
+                            </div>
                         </div>
-                    </div>
+                    )}
 
 
                     {/* Authentication */}
@@ -76,15 +89,17 @@ export default function Navbar() {
                                     Sign out
                                 </button>
                             ) : (
-                                <link to="/login" className="authentication-login fw-semibold">
+                                <Link to="/login" className="authentication-login fw-semibold">
                                     Sign in
-                                </link>
+                                </Link>
                             )}
                             
 
-                            <button className="join fw-semibold">
-                                Join Now
-                            </button>
+                            {showJoin && (
+                                <button className="join fw-semibold">
+                                    Join Now
+                                </button>
+                            )}
                         </div>
                     </div>
 

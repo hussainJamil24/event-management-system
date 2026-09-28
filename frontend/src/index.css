@@ -35,6 +35,10 @@ ul {
   padding: 0;
 }
 
+.eventdetails-navbar {
+  background-color: #D6E3FF;
+}
+
 .navigation-links li a {
   text-decoration: none;
   color: #002147;
@@ -398,6 +402,7 @@ ul {
 
 /* view details */
 .view-details {
+  display: block;
   width: 100%;
   padding: 8px;
   background-color: #ffffff;
@@ -406,6 +411,8 @@ ul {
   border-radius: 6px;
   font-size: 12px;
   font-weight: 600;
+  text-align: center;
+  text-decoration: none;
 }
 
 .view-details:hover {
