@@ -8,6 +8,7 @@ from sqlalchemy import (
     String,
     Text,
     Time,
+    Float,
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -51,6 +52,9 @@ class Event(Base):
         String(255),
         nullable=True,
     )
+
+    latitude = Column(Float, nullable=True)
+    longitude = Column(Float, nullable=True)
 
     event_date = Column(
         Date,

@@ -21,6 +21,8 @@ def create_event(
         description=event.description,
         image=event.image,
         location=event.location,
+        latitude=event.latitude,
+        longitude=event.longitude,
         event_date=event.event_date,
         start_time=event.start_time,
         end_time=event.end_time,

@@ -5,6 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 import "./index.css";
+import "leaflet/dist/leaflet.css";
 import App from "./App";
 
 const root = ReactDOM.createRoot(

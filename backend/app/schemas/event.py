@@ -47,7 +47,8 @@ class EventBase(BaseModel):
 
 
 class EventCreate(EventBase):
-    pass
+    latitude: float | None = None
+    longitude: float | None = None
 
 
 class EventUpdate(BaseModel):
@@ -89,6 +90,9 @@ class EventUpdate(BaseModel):
         max_length=255,
     )
 
+    latitude: float | None = None
+    longitude: float | None = None
+
     category_id: Optional[int] = Field(
         default=None,
         gt=0,
@@ -96,6 +100,8 @@ class EventUpdate(BaseModel):
 
 
 class EventResponse(EventBase):
+    latitude: float | None = None
+    longitude: float | None = None
     model_config = ConfigDict(from_attributes=True)
 
     id: int
