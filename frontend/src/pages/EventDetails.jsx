@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 
@@ -20,10 +20,14 @@ L.Icon.Default.mergeOptions({
 
 export default function EventDetails() {
     const { eventId } = useParams();
+    const navigate = useNavigate();
 
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+
+    const [registering, setRegistering] = useState(false);
+    const [registrationError, setRegistrationError] = useState("");
     
     const fallbackCoordinates = [35.1856, 33.3823];
 
@@ -52,6 +56,45 @@ export default function EventDetails() {
 
         fetchEvent();
     }, [eventId]);
+
+    const handleRegister = async () => {
+        try {
+            setRegistering(true);
+            setRegistrationError("");
+
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                navigate("/login");
+                return;
+            }
+
+            await api.post(
+                "/registrations/",
+                {
+                    event_id: Number(eventId),
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            navigate("/my-events");
+
+        } catch (error) {
+            console.error("Registration failed:", error);
+
+            setRegistrationError(
+                error.response?.data?.detail ||
+                "Failed to register for this event."
+            );
+
+        } finally {
+            setRegistering(false);
+        }
+    };
 
     if (loading) {
         return (
@@ -282,13 +325,19 @@ export default function EventDetails() {
 
 
                                 {/* Register */}
-                                <button className="register-button">
+                                <button className="register-button" onClick={handleRegister} disabled={registering}>
 
                                     <i className="bi bi-ticket-perforated me-2"></i>
 
-                                    Register Now
+                                    {registering ? "Registering..." : "Register Now"}
 
                                 </button>
+
+                                {registrationError && (
+                                    <div className="text-danger small mt-2">
+                                        {registrationError}
+                                    </div>
+                                )}
 
 
                                 {/* Login message */}
