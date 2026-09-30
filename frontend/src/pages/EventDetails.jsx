@@ -284,7 +284,7 @@ export default function EventDetails() {
                                 {/* Register */}
                                 <button className="register-button">
 
-                                    <i className="bi bi-ticket-perforated"></i>
+                                    <i className="bi bi-ticket-perforated me-2"></i>
 
                                     Register Now
 
