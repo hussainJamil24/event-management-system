@@ -1,4 +1,4 @@
-from sqlalchemy import or_
+from sqlalchemy import or_, update
 from datetime import date
 from sqlalchemy.orm import Session
 from dateutil.relativedelta import relativedelta
@@ -47,6 +47,42 @@ def get_event_by_id(
         .filter(Event.id == event_id)
         .first()
     )
+
+
+def decrease_available_seat(
+    db: Session,
+    event_id: int,
+) -> bool:
+    result = db.execute(
+        update(Event)
+        .where(
+            Event.id == event_id,
+            Event.available_seats > 0,
+        )
+        .values(
+            available_seats=Event.available_seats - 1
+        )
+    )
+
+    return result.rowcount == 1
+
+
+def increase_available_seat(
+    db: Session,
+    event_id: int,
+) -> bool:
+    result = db.execute(
+        update(Event)
+        .where(
+            Event.id == event_id,
+            Event.available_seats < Event.max_capacity,
+        )
+        .values(
+            available_seats=Event.available_seats + 1
+        )
+    )
+
+    return result.rowcount == 1
 
 
 def get_all_events(

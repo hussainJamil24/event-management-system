@@ -24,6 +24,11 @@ export default function Register() {
     const handleSubmit = async (e) =>{
         e.preventDefault();
 
+        if (formData.password.length < 8 || formData.password.length > 12) {
+            alert("Your password must be between 8 and 12 characters long.");
+            return;
+        }
+
         if(formData.password !== formData.confirmPassword) {
             alert("Passwords don't match!");
             return;
@@ -42,10 +47,10 @@ export default function Register() {
 
             navigate("/login");
 
-        } catch(err) {
-            console.error(err);
+        } catch(error) {
+            console.error("Registration error:", error.response?.data);
             // backend error message
-            const message = err.response?.data?.detail || "Registration failed.";
+            const message = error.response?.data?.detail || "Registration failed.";
             alert(message);
         }
     };

@@ -15,7 +15,11 @@ from app.crud.registration import (
 )
 
 from app.crud.user import get_user_by_id
-from app.crud.event import get_event_by_id
+from app.crud.event import (
+    get_event_by_id,
+    decrease_available_seat,
+    increase_available_seat,
+)
 from app.models.registration import Registration
 
 
@@ -55,36 +59,95 @@ def create_registration(
             detail="Event is not open for registration.",
         )
 
-    # Check duplicate registration
+    # Check existing registration
     existing_registration = crud_get_registration(
         db,
         user_id,
         registration_create.event_id,
     )
 
-    if existing_registration:
+    # User is already registered
+    if existing_registration and existing_registration.status == "registered":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="You are already registered for this event.",
         )
 
-    # Check available seats
-    if db_event.available_seats <= 0:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="No available seats.",
+    # User previously cancelled and wants to register again
+    if existing_registration and existing_registration.status == "cancelled":
+        try:
+            # Reserve a seat again
+            seat_reserved = decrease_available_seat(
+                db=db,
+                event_id=db_event.id,
+            )
+
+            if not seat_reserved:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="No available seats.",
+                )
+
+            # Change cancelled registration back to registered
+            db_registration = crud_update_registration(
+                db=db,
+                db_registration=existing_registration,
+                registration_update=RegistrationUpdate(
+                    status="registered"
+                ),
+            )
+
+            # Commit seat + registration together
+            db.commit()
+
+            db.refresh(db_registration)
+
+            return db_registration
+
+        except HTTPException:
+            db.rollback()
+            raise
+
+        except Exception:
+            db.rollback()
+            raise
+
+    # New registration
+    try:
+        # Reserve a seat
+        seat_reserved = decrease_available_seat(
+            db=db,
+            event_id=db_event.id,
         )
 
-    # TODO:
-    # Decrease available seats through the Event CRUD layer.
-    # (We'll add a CRUD helper for this later.)
+        if not seat_reserved:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No available seats.",
+            )
 
-    return crud_create_registration(
-        db=db,
-        registration=registration_create,
-        user_id=user_id,
-    )
+        # Create new registration
+        db_registration = crud_create_registration(
+            db=db,
+            registration=registration_create,
+            user_id=user_id,
+        )
 
+        # Commit seat + registration together
+        db.commit()
+
+        db.refresh(db_registration)
+
+        return db_registration
+
+    except HTTPException:
+        db.rollback()
+        raise
+
+    except Exception:
+        db.rollback()
+        raise
+    
 
 def get_registration(
     db: Session,
@@ -166,8 +229,48 @@ def update_registration(
             detail="Registration not found.",
         )
 
-    return crud_update_registration(
-        db=db,
-        db_registration=db_registration,
-        registration_update=registration_update,
-    )
+    old_status = db_registration.status
+    new_status = registration_update.status
+
+    try:
+        # Registered → Cancelled
+        if old_status == "registered" and new_status == "cancelled":
+            seat_restored = increase_available_seat(
+                db=db,
+                event_id=event_id,
+            )
+
+            if not seat_restored:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Unable to restore event capacity.",
+                )
+
+        # Prevent cancelling an already cancelled registration
+        elif old_status == "cancelled" and new_status == "cancelled":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Registration is already cancelled.",
+            )
+
+        # Update registration status
+        db_registration = crud_update_registration(
+            db=db,
+            db_registration=db_registration,
+            registration_update=registration_update,
+        )
+
+        # Commit status + seat change together
+        db.commit()
+
+        db.refresh(db_registration)
+
+        return db_registration
+
+    except HTTPException:
+        db.rollback()
+        raise
+
+    except Exception:
+        db.rollback()
+        raise

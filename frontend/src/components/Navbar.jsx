@@ -27,7 +27,7 @@ export default function Navbar({showSearch = true, showJoin = true, showProfile 
                             <ul className="navigation-links">
                                 <li>
                                     <Link
-                                        to="/browse"
+                                        to="/"
                                         className="fw-semibold"
                                     >
                                         Browse

@@ -8,15 +8,14 @@ def create_registration(
     registration: RegistrationCreate,
     user_id: int,
 ) -> Registration:
-        db_registration = Registration(
-            user_id=user_id,
-            event_id=registration.event_id,
-        )
-        db.add(db_registration)
-        db.commit()
-        db.refresh(db_registration)
-        
-        return db_registration
+    db_registration = Registration(
+        user_id=user_id,
+        event_id=registration.event_id,
+    )
+
+    db.add(db_registration)
+
+    return db_registration
 
 def get_registration(
     db: Session,
@@ -68,9 +67,6 @@ def update_registration(
     registration_update: RegistrationUpdate,
 ) -> Registration:
     db_registration.status = registration_update.status
-
-    db.commit()
-    db.refresh(db_registration)
 
     return db_registration
 

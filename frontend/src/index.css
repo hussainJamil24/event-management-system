@@ -1069,6 +1069,11 @@ ul {
   color: #4b5563;
 }
 
+.registration-status.cancelled {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
 .registration-actions {
   display: flex;
   justify-content: flex-start;

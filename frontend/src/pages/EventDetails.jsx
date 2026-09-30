@@ -28,6 +28,9 @@ export default function EventDetails() {
 
     const [registering, setRegistering] = useState(false);
     const [registrationError, setRegistrationError] = useState("");
+
+    const [alreadyRegistered, setAlreadyRegistered] = useState(false);
+    const [checkingRegistration, setCheckingRegistration] = useState(true);
     
     const fallbackCoordinates = [35.1856, 33.3823];
 
@@ -55,6 +58,51 @@ export default function EventDetails() {
         };
 
         fetchEvent();
+    }, [eventId]);
+
+    useEffect(() => {
+        const checkRegistration = async () => {
+            const token = localStorage.getItem("token");
+
+            // User is not logged in
+            if (!token) {
+                setCheckingRegistration(false);
+                return;
+            }
+
+            try {
+                const response = await api.get(
+                    `/registrations/${eventId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+
+                // Registration exists
+                if (response.data?.status === "registered") {
+                    setAlreadyRegistered(true);
+                } else {
+                    setAlreadyRegistered(false);
+                }
+                
+            } catch (error) {
+                // 404 means the user has not registered
+                if (error.response?.status === 404) {
+                    setAlreadyRegistered(false);
+                } else {
+                    console.error(
+                        "Failed to check registration:",
+                        error
+                    );
+                }
+            } finally {
+                setCheckingRegistration(false);
+            }
+        };
+
+        checkRegistration();
     }, [eventId]);
 
     const handleRegister = async () => {
@@ -325,11 +373,13 @@ export default function EventDetails() {
 
 
                                 {/* Register */}
-                                <button className="register-button" onClick={handleRegister} disabled={registering}>
+                                <button className="register-button" onClick={handleRegister} disabled={registering || checkingRegistration || alreadyRegistered}>
 
-                                    <i className="bi bi-ticket-perforated me-2"></i>
+                                    <i className={`bi ${alreadyRegistered ? "bi-check-circle"  : "bi-ticket-perforated"} me-2`}> </i>
 
-                                    {registering ? "Registering..." : "Register Now"}
+                                    {checkingRegistration  ? "Checking..." : alreadyRegistered ? "Registered"
+                                        : registering ? "Registering..." : "Register Now"
+                                    }
 
                                 </button>
 
