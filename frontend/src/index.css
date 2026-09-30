@@ -882,7 +882,222 @@ ul {
   line-height: 1.4;
 }
 
+/* my events */
+.my-events-page {
+  min-height: 100vh;
+  background-color: #f6f8fd;
+  padding: 32px 0 50px;
+}
 
+.registration-navbar {
+  background-color: #eef3ff;
+}
+
+.my-events-header {
+  margin-bottom: 28px;
+}
+
+.my-events-header h1 {
+  margin: 0 0 6px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.my-events-header p {
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.registration-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 30px;
+}
+
+.registration-summary-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 68px;
+  padding: 14px 18px;
+  background-color: #ffffff;
+  border: 1px solid #e5e9f2;
+  border-radius: 8px;
+}
+
+.summary-icon {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #8ee8e8;
+  color: #008b8b;
+  border-radius: 6px;
+  font-size: 17px;
+  flex-shrink: 0;
+}
+
+.summary-icon.past-icon {
+  background-color: #dce8ff;
+  color: #5574ad;
+}
+
+.summary-icon.next-icon {
+  background-color: #062d57;
+  color: #ffffff;
+}
+
+.registration-summary-card div:last-child {
+  display: flex;
+  flex-direction: column;
+}
+
+.registration-summary-card span {
+  font-size: 10px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.registration-summary-card strong {
+  margin-top: 2px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.registration-section {
+  margin-bottom: 30px;
+}
+
+.registration-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.registration-section-header h2 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.registration-section-header span {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.registration-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  background-color: #ffffff;
+  border: 1px solid #e5e9f2;
+  border-radius: 8px;
+}
+
+.registration-table {
+  min-width: 700px;
+}
+
+.registration-table-header,
+.registration-table-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 0.8fr;
+  align-items: center;
+}
+
+.registration-table-header {
+  min-height: 38px;
+  padding: 0 16px;
+  background-color: #eef3ff;
+  font-size: 9px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.registration-table-row {
+  min-height: 64px;
+  padding: 0 16px;
+  border-top: 1px solid #edf0f5;
+}
+
+.registration-event {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.registration-event img {
+  width: 38px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.registration-event strong {
+  font-size: 11px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.registration-date {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.registration-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.registration-status.upcoming {
+  background-color: #8de5e5;
+  color: #007777;
+}
+
+.registration-status.past {
+  background-color: #d1d5db;
+  color: #4b5563;
+}
+
+.registration-actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.cancel-registration,
+.details-registration {
+  border: none;
+  background: transparent;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cancel-registration {
+  color: #dc5c5c;
+}
+
+.cancel-registration:hover {
+  color: #b91c1c;
+}
+
+.details-registration {
+  color: #475569;
+}
+
+.details-registration:hover {
+  color: #008b8b;
+}
 
 /* media qu */
 @media (min-width: 768px) {
@@ -928,4 +1143,32 @@ ul {
     height: 300px;
   }
 
+}
+
+@media (max-width: 575.98px) {
+    .my-events-page {
+      padding-top: 20px;
+    }
+
+    .my-events-header h1 {
+      font-size: 22px;
+    }
+
+    .my-events-header p {
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .registration-summary {
+      gap: 10px;
+    }
+
+    .registration-summary-card {
+      min-height: 62px;
+      padding: 12px 14px;
+    }
+
+    .registration-section-header h2 {
+      font-size: 17px;
+    }
 }

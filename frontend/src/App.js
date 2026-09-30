@@ -3,6 +3,7 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import EventDetails from "./pages/EventDetails";
+import MyEvents from "./pages/MyEvents";
 
 
 import { AuthProvider } from "./context/AuthContext";
@@ -19,6 +20,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/events/:eventId" element={<EventDetails  />} />
+                <Route path="/my-events" element={<MyEvents />} />
 
                 {/* Protected routes */}
                 <Route element={<ProtectedRoute />}>
