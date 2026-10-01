@@ -50,6 +50,8 @@ export function AuthProvider({children}) {
         });
 
         setUser(response.data);
+
+        return response.data;
     };
 
 
