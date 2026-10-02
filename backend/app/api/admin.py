@@ -12,6 +12,12 @@ from app.schemas.admin import (
     AdminEventUpdate,
 )
 
+from app.schemas.category import (
+    CategoryCreate,
+    CategoryResponse,
+    CategoryUpdate,
+)
+
 from app.schemas.event import EventResponse
 from app.crud.admin import get_dashboard_statistics
 
@@ -21,6 +27,14 @@ from app.crud.admin_event import (
     create_admin_event,
     update_admin_event,
     delete_admin_event,
+)
+
+from app.crud.admin_category import (
+    get_admin_categories,
+    get_admin_category,
+    create_admin_category,
+    update_admin_category,
+    delete_admin_category,
 )
 
 
@@ -183,4 +197,135 @@ def delete_event_as_admin(
 
     return {
         "message": "Event deleted successfully."
+    }
+
+# =========================
+# Admin Categories
+# =========================
+
+@router.get(
+    "/categories",
+    response_model=List[CategoryResponse],
+)
+def read_admin_categories(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin),
+):
+    return get_admin_categories(db)
+
+
+@router.get(
+    "/categories/{category_id}",
+    response_model=CategoryResponse,
+)
+def read_admin_category(
+    category_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin),
+):
+    category = get_admin_category(
+        db=db,
+        category_id=category_id,
+    )
+
+    if not category:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Category not found.",
+        )
+
+    return category
+
+
+@router.post(
+    "/categories",
+    response_model=CategoryResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_category_as_admin(
+    category_data: CategoryCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin),
+):
+    try:
+        return create_admin_category(
+            db=db,
+            category_data=category_data,
+        )
+
+    except ValueError as error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(error),
+        )
+
+
+@router.put(
+    "/categories/{category_id}",
+    response_model=CategoryResponse,
+)
+def update_category_as_admin(
+    category_id: int,
+    category_data: CategoryUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin),
+):
+    category = get_admin_category(
+        db=db,
+        category_id=category_id,
+    )
+
+    if not category:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Category not found.",
+        )
+
+    try:
+        return update_admin_category(
+            db=db,
+            db_category=category,
+            category_data=category_data,
+        )
+
+    except ValueError as error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(error),
+        )
+
+
+@router.delete(
+    "/categories/{category_id}",
+)
+def delete_category_as_admin(
+    category_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin),
+):
+    category = get_admin_category(
+        db=db,
+        category_id=category_id,
+    )
+
+    if not category:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Category not found.",
+        )
+
+    try:
+        delete_admin_category(
+            db=db,
+            db_category=category,
+        )
+
+    except ValueError as error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(error),
+        )
+
+    return {
+        "message": "Category deleted successfully."
     }
