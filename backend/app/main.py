@@ -2,10 +2,14 @@ from fastapi import FastAPI
 from sqlalchemy import text
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.admin import router as admin_router
+
 import app.models  # Registers all SQLAlchemy models
 
 from app.api import auth, events, category, registration
 from app.core.database import Base, engine
+
+
 
 
 app = FastAPI()
@@ -22,6 +26,7 @@ app.include_router(auth.router)
 app.include_router(events.router)
 app.include_router(category.router)
 app.include_router(registration.router)
+app.include_router(admin_router)
 
 
 @app.on_event("startup")
