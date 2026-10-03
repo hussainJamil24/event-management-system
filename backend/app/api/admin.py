@@ -1,3 +1,19 @@
+from app.schemas.user import UserResponse, UserUpdate
+
+from app.schemas.registration import (
+    RegistrationResponse,
+    RegistrationUpdate,
+)
+
+from app.services.admin_registration import (
+    update_admin_registration,
+)
+
+from app.crud.admin_registration import (
+    get_admin_registrations,
+    get_admin_registration,
+)
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
@@ -439,3 +455,111 @@ def delete_user_as_admin(
     return {
         "message": "User deleted successfully."
     }
+
+# =========================
+# Admin Registrations
+# =========================
+
+@router.get(
+    "/registrations",
+    response_model=List[RegistrationResponse],
+)
+def read_admin_registrations(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin),
+):
+    return get_admin_registrations(db)
+
+
+@router.get(
+    "/registrations/{registration_id}",
+    response_model=RegistrationResponse,
+)
+def read_admin_registration(
+    registration_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin),
+):
+    registration = get_admin_registration(
+        db=db,
+        registration_id=registration_id,
+    )
+
+    if not registration:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Registration not found.",
+        )
+
+    return registration
+
+@router.put(
+    "/registrations/{registration_id}",
+    response_model=RegistrationResponse,
+)
+def update_registration_as_admin(
+    registration_id: int,
+    registration_update: RegistrationUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin),
+):
+    return update_admin_registration(
+        db=db,
+        registration_id=registration_id,
+        registration_update=registration_update,
+    )
+
+
+# =========================
+# Admin Registrations
+# =========================
+
+@router.get(
+    "/registrations",
+    response_model=List[RegistrationResponse],
+)
+def read_admin_registrations(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin),
+):
+    return get_admin_registrations(db)
+
+
+@router.get(
+    "/registrations/{registration_id}",
+    response_model=RegistrationResponse,
+)
+def read_admin_registration(
+    registration_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin),
+):
+    registration = get_admin_registration(
+        db=db,
+        registration_id=registration_id,
+    )
+
+    if not registration:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Registration not found.",
+        )
+
+    return registration
+
+
+@router.put(
+    "/registrations/{registration_id}",
+    response_model=RegistrationResponse,
+)
+def update_registration_as_admin(
+    registration_id: int,
+    registration_update: RegistrationUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin),
+):
+    return update_admin_registration(
+        db=db,
+        registration_id=registration_id,
+        registration_update=registration_update,
+    )
