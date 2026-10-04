@@ -63,6 +63,9 @@ export default function Home() {
 
             const response = await api.get("/events/", {
                 params: params,
+                paramsSerializer: {
+                    indexes: null,
+                },
             });
 
             setEvents(response.data);
