@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 
@@ -17,7 +17,6 @@ L.Icon.Default.mergeOptions({
 });
 
 
-
 export default function EventDetails() {
     const { eventId } = useParams();
     const navigate = useNavigate();
@@ -31,7 +30,7 @@ export default function EventDetails() {
 
     const [alreadyRegistered, setAlreadyRegistered] = useState(false);
     const [checkingRegistration, setCheckingRegistration] = useState(true);
-    
+
     const fallbackCoordinates = [35.1856, 33.3823];
 
     useEffect(() => {
@@ -45,6 +44,7 @@ export default function EventDetails() {
                 );
 
                 setEvent(response.data);
+
             } catch (error) {
                 console.error(
                     "Failed to fetch event:",
@@ -52,6 +52,7 @@ export default function EventDetails() {
                 );
 
                 setError("Failed to load event.");
+
             } finally {
                 setLoading(false);
             }
@@ -59,6 +60,7 @@ export default function EventDetails() {
 
         fetchEvent();
     }, [eventId]);
+
 
     useEffect(() => {
         const checkRegistration = async () => {
@@ -86,7 +88,7 @@ export default function EventDetails() {
                 } else {
                     setAlreadyRegistered(false);
                 }
-                
+
             } catch (error) {
                 // 404 means the user has not registered
                 if (error.response?.status === 404) {
@@ -97,6 +99,7 @@ export default function EventDetails() {
                         error
                     );
                 }
+
             } finally {
                 setCheckingRegistration(false);
             }
@@ -104,6 +107,7 @@ export default function EventDetails() {
 
         checkRegistration();
     }, [eventId]);
+
 
     const handleRegister = async () => {
         try {
@@ -144,6 +148,7 @@ export default function EventDetails() {
         }
     };
 
+
     if (loading) {
         return (
             <>
@@ -160,6 +165,7 @@ export default function EventDetails() {
             </>
         );
     }
+
 
     if (error) {
         return (
@@ -180,14 +186,17 @@ export default function EventDetails() {
         );
     }
 
+
     if (!event) {
         return null;
     }
+
 
     const mapCoordinates =
         event.latitude != null && event.longitude != null
             ? [event.latitude, event.longitude]
             : fallbackCoordinates;
+
 
     return (
         <>
@@ -214,8 +223,9 @@ export default function EventDetails() {
 
                                     <img
                                         src={
-                                            event.image ? `http://127.0.0.1:8000${event.image}`
-                                            : "https://via.placeholder.com/800x500?text=Event"
+                                            event.image
+                                                ? `http://127.0.0.1:8000${event.image}`
+                                                : "https://via.placeholder.com/800x500?text=Event"
                                         }
                                         alt={event.title}
                                         className="event-details-image"
@@ -226,6 +236,7 @@ export default function EventDetails() {
                                     </span>
 
                                 </div>
+
 
                                 {/* Event information */}
                                 <div className="event-details-content">
@@ -241,8 +252,9 @@ export default function EventDetails() {
                                         <span>
                                             Organized by{" "}
                                             <strong>
-                                                {event.organizer ? `${event.organizer.first_name} ${event.organizer.last_name}`
-                                                : "Unknown Organizer"}
+                                                {event.organizer
+                                                    ? `${event.organizer.first_name} ${event.organizer.last_name}`
+                                                    : "Unknown Organizer"}
                                             </strong>
                                         </span>
 
@@ -365,7 +377,7 @@ export default function EventDetails() {
                                                 ((event.max_capacity -
                                                     event.available_seats) /
                                                     event.max_capacity) *
-                                                    100
+                                                100
                                             )}% filled`
                                             : "Capacity unavailable"}
                                     </small>
@@ -374,15 +386,35 @@ export default function EventDetails() {
 
 
                                 {/* Register */}
-                                <button className="register-button" onClick={handleRegister} disabled={registering || checkingRegistration || alreadyRegistered}>
+                                <button
+                                    className="register-button"
+                                    onClick={handleRegister}
+                                    disabled={
+                                        registering ||
+                                        checkingRegistration ||
+                                        alreadyRegistered
+                                    }
+                                >
 
-                                    <i className={`bi ${alreadyRegistered ? "bi-check-circle"  : "bi-ticket-perforated"} me-2`}> </i>
+                                    <i
+                                        className={`bi ${
+                                            alreadyRegistered
+                                                ? "bi-check-circle"
+                                                : "bi-ticket-perforated"
+                                        } me-2`}
+                                    ></i>
 
-                                    {checkingRegistration  ? "Checking..." : alreadyRegistered ? "Registered"
-                                        : registering ? "Registering..." : "Register Now"
+                                    {checkingRegistration
+                                        ? "Checking..."
+                                        : alreadyRegistered
+                                            ? "Registered"
+                                            : registering
+                                                ? "Registering..."
+                                                : "Register Now"
                                     }
 
                                 </button>
+
 
                                 {registrationError && (
                                     <div className="text-danger small mt-2">
@@ -419,8 +451,9 @@ export default function EventDetails() {
                                     </small>
 
                                     <strong>
-                                        {event.organizer ? `${event.organizer.first_name} ${event.organizer.last_name}`
-                                        : "Unknown Organizer"}
+                                        {event.organizer
+                                            ? `${event.organizer.first_name} ${event.organizer.last_name}`
+                                            : "Unknown Organizer"}
                                     </strong>
 
                                     <span>
@@ -436,26 +469,40 @@ export default function EventDetails() {
 
                 </div>
 
+
                 {/* location and highlights */}
                 <div className="event-details-extra">
+
                     {/* event location */}
                     <div className="event-location-section">
+
                         <h2>Event Location</h2>
 
                         <div className="event-map">
-                            <MapContainer center={mapCoordinates} zoom={13} scrollWheelZoom={false}
-                                style={{ height: "100%", width: "100%" }}
+
+                            <MapContainer
+                                center={mapCoordinates}
+                                zoom={13}
+                                scrollWheelZoom={false}
+                                style={{
+                                    height: "100%",
+                                    width: "100%",
+                                }}
                             >
-                                <TileLayer attribution='&copy; OpenStreetMap contributors'
+
+                                <TileLayer
+                                    attribution="&copy; OpenStreetMap contributors"
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                 />
 
                                 <Marker position={mapCoordinates}>
+
                                     <Popup>
                                         <strong>{event.title}</strong>
-                                        <br/>
+                                        <br />
                                         {event.location}
                                     </Popup>
+
                                 </Marker>
 
                             </MapContainer>
@@ -464,41 +511,55 @@ export default function EventDetails() {
 
                     </div>
 
+
                     {/* event highlights */}
                     <div className="event-highlights">
+
                         <h2>Event Highlights</h2>
 
+                        {/* Keynote Speakers */}
                         <div className="highlight-item">
+
                             <i className="bi bi-mic-fill"></i>
+
+                            <div>
+                                <h5>Keynote Speakers</h5>
+
+                                <p>
+                                    Hear from the CEOs of top Silicon Valley unicorns.
+                                </p>
+                            </div>
+
                         </div>
 
-                        <div>
-                            <h5>Keynote Speakers</h5>
 
-                            <p>Hear from the CEOs of top Silicon Valley unicorns.</p>
-
-                        </div>
-
+                        {/* Networking Lounge */}
                         <div className="highlight-item">
+
                             <i className="bi bi-people-fill"></i>
 
                             <div>
                                 <h5>Networking Lounge</h5>
 
-                                <p>Dedicated space for 1-on-1 industry connections.</p>
-
+                                <p>
+                                    Dedicated space for 1-on-1 industry connections.
+                                </p>
                             </div>
 
                         </div>
 
+
+                        {/* Catered Lunch */}
                         <div className="highlight-item">
+
                             <i className="bi bi-fork-knife"></i>
 
                             <div>
                                 <h5>Catered Lunch</h5>
 
-                                <p>Gourmet meals provided for all registered attendees.</p>
-
+                                <p>
+                                    Gourmet meals provided for all registered attendees.
+                                </p>
                             </div>
 
                         </div>
