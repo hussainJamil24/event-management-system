@@ -118,7 +118,12 @@ export default function Home() {
 
     return (
         <>
-            <Navbar />
+            <Navbar
+                searchValue={filters.search}
+                onSearchChange={(value) =>
+                    handleFilterChange("search", value)
+                }
+            />
 
             {/* hero */}
             <HeroSection filters={filters}

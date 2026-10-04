@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-export default function Navbar({showSearch = true, showJoin = true, showProfile = false, navbarClassName = ""}) {
+export default function Navbar({showSearch = true, showJoin = true, showProfile = false, navbarClassName = "", searchValue = "", onSearchChange}) {
     const {isAuthenticated, logout} = useAuth();
     return (
         <nav className={`navbar-container shadow-sm px-2 px-md-4 ${navbarClassName}`}>
@@ -75,6 +75,8 @@ export default function Navbar({showSearch = true, showJoin = true, showProfile 
                                 <input
                                     type="text"
                                     placeholder="Search events..."
+                                    value={searchValue}
+                                    onChange={(event) => onSearchChange(event.target.value)}
                                 />
                             </div>
                         </div>
