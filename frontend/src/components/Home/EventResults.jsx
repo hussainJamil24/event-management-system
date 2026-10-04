@@ -1,6 +1,63 @@
 import EventCard from "./EventCard";
+import { useState } from "react";
+
+function getDaysInMonth(year, month) {
+    return new Date(year, month + 1, 0).getDate();
+}
+
+function getFirstDayOfMonth(year, month) {
+    return new Date(year, month, 1).getDay();
+}
 
 export default function EventResults({events, loading, error, viewMode, onViewModeChange}) {
+
+    const today = new Date();
+
+    const [calendarDate, setCalendarDate] = useState(
+        new Date(today.getFullYear(), today.getMonth(), 1)
+    );
+
+    const previousMonth = () => {
+        setCalendarDate(
+            new Date(
+                calendarDate.getFullYear(),
+                calendarDate.getMonth() - 1,
+                1
+            )
+        );
+    };
+
+    const nextMonth = () => {
+        setCalendarDate(
+            new Date(
+                calendarDate.getFullYear(),
+                calendarDate.getMonth() + 1,
+                1
+            )
+        );
+    };
+
+    const calendarYear = calendarDate.getFullYear();
+    const calendarMonth = calendarDate.getMonth();
+
+    const daysInMonth = getDaysInMonth(
+        calendarYear,
+        calendarMonth
+    );
+
+    const firstDay = getFirstDayOfMonth(
+        calendarYear,
+        calendarMonth
+    );
+
+    const monthName = calendarDate.toLocaleString(
+        "default",
+        {
+            month: "long",
+        }
+    );
+
+
     return(
         <section className="event-results">
             {/* results header */}
@@ -76,6 +133,99 @@ export default function EventResults({events, loading, error, viewMode, onViewMo
             )}
 
             {/* events calendar view */}
+            {!loading &&
+                !error &&
+                events.length > 0 &&
+                viewMode === "calendar" && (
+                    <div className="event-calendar">
+
+                        {/* calendar header */}
+                        <div className="calendar-header">
+                            <button
+                                type="button"
+                                onClick={previousMonth}
+                                className="calendar-nav-button"
+                            >
+                                <i className="bi bi-chevron-left"></i>
+                            </button>
+
+                            <h4>
+                                {monthName} {calendarYear}
+                            </h4>
+
+                            <button
+                                type="button"
+                                onClick={nextMonth}
+                                className="calendar-nav-button"
+                            >
+                                <i className="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
+
+                        {/* days of week */}
+                        <div className="calendar-weekdays">
+                            <div>Sun</div>
+                            <div>Mon</div>
+                            <div>Tue</div>
+                            <div>Wed</div>
+                            <div>Thu</div>
+                            <div>Fri</div>
+                            <div>Sat</div>
+                        </div>
+
+                        {/* calendar days */}
+                        <div className="calendar-grid">
+
+                            {/* empty cells before first day */}
+                            {Array.from({
+                                length: firstDay,
+                            }).map((_, index) => (
+                                <div
+                                    key={`empty-${index}`}
+                                    className="calendar-day empty"
+                                ></div>
+                            ))}
+
+                            {/* actual days */}
+                            {Array.from({
+                                length: daysInMonth,
+                            }).map((_, index) => {
+                                const day = index + 1;
+
+                                const dateString =
+                                    `${calendarYear}-${String(
+                                        calendarMonth + 1
+                                    ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+                                const dayEvents = events.filter(
+                                    (event) =>
+                                        event.event_date === dateString
+                                );
+
+                                return (
+                                    <div
+                                        key={day}
+                                        className="calendar-day"
+                                    >
+                                        <div className="calendar-day-number">
+                                            {day}
+                                        </div>
+
+                                        {dayEvents.map((event) => (
+                                            <div
+                                                key={event.id}
+                                                className="calendar-event"
+                                            >
+                                                {event.title}
+                                            </div>
+                                        ))}
+                                    </div>
+                                );
+                            })}
+
+                        </div>
+                    </div>
+                )}
 
             {/* load more */}
             {!loading && events.length > 0 && (
