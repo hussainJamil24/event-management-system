@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -13,6 +14,12 @@ from app.core.database import Base, engine
 
 
 app = FastAPI()
+
+app.mount(
+    "/uploads",
+    StaticFiles(directory="uploads"),
+    name="uploads",
+)
 
 app.add_middleware(
     CORSMiddleware,

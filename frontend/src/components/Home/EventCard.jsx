@@ -12,7 +12,7 @@ export default function EventCard({event}) {
         <div className="event-card">
             {/* event image */}
             <div className="event-image-container">
-                <img src={ event.image || "https://via.placeholder.com/600x400?text=Event"} 
+                <img src={ event.image ? `http://127.0.0.1:8000${event.image}` : "https://via.placeholder.com/800x500?text=Event"} 
                     alt={event.title} className="event-image"
                     style={{
                         height: "200px", objectFit: "cover",

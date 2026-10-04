@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 
+import MapPicker from "../../components/Admin/MapPicker";
+
 export default function AdminEvents() {
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+
+    const [users, setUsers] = useState([]);
+    const [categories, setCategories] = useState([]);
 
     const [deletingId, setDeletingId] = useState(null);
 
@@ -20,7 +25,7 @@ export default function AdminEvents() {
         category_id: "",
         title: "",
         description: "",
-        image: "",
+        image: null,
         event_date: "",
         start_time: "",
         end_time: "",
@@ -34,6 +39,38 @@ export default function AdminEvents() {
     const [newEvent, setNewEvent] = useState(emptyEvent);
     const [creating, setCreating] = useState(false);
 
+    const uploadEventImage = async (file) => {
+        if (!file) {
+            return null;
+        }
+
+        try {
+            const token = localStorage.getItem("token");
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const response = await api.post(
+                "/admin/upload/event-image",
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+
+            return response.data.image_url;
+        } catch (error) {
+            console.error("Failed to upload event image:", error);
+            throw new Error(
+                error.response?.data?.detail ||
+                "Failed to upload event image."
+            );
+        }
+    };
+
     const handleCreate = async () => {
         try {
             setCreating(true);
@@ -41,19 +78,18 @@ export default function AdminEvents() {
 
             const token = localStorage.getItem("token");
 
+            // Upload image first
+            const imageUrl = await uploadEventImage(newEvent.image);
+
+            // Create event
             const response = await api.post(
                 "/admin/events",
                 {
                     ...newEvent,
-                    organizer_id: Number(
-                        newEvent.organizer_id
-                    ),
-                    category_id: Number(
-                        newEvent.category_id
-                    ),
-                    max_capacity: Number(
-                        newEvent.max_capacity
-                    ),
+                    image: imageUrl,
+                    organizer_id: Number(newEvent.organizer_id),
+                    category_id: Number(newEvent.category_id),
+                    max_capacity: Number(newEvent.max_capacity),
                     latitude:
                         newEvent.latitude === ""
                             ? null
@@ -79,13 +115,10 @@ export default function AdminEvents() {
             setShowCreateModal(false);
 
         } catch (error) {
-            console.error(
-                "Failed to create event:",
-                error
-            );
-
+            console.error("Failed to create event:", error);
             setError(
                 error.response?.data?.detail ||
+                error.message ||
                 "Failed to create event."
             );
 
@@ -253,8 +286,66 @@ export default function AdminEvents() {
         }
     };
 
+    const fetchUsers = async () => {
+        try {
+            const token = localStorage.getItem("token");
+
+            const response = await api.get(
+                "/admin/users",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            setUsers(response.data);
+
+        } catch (error) {
+            console.error(
+                "Failed to load users:",
+                error
+            );
+
+            setError(
+                error.response?.data?.detail ||
+                "Failed to load users."
+            );
+        }
+    };
+
+    const fetchCategories = async () => {
+        try {
+            const token = localStorage.getItem("token");
+
+            const response = await api.get(
+                "/admin/categories",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            setCategories(response.data);
+
+        } catch (error) {
+            console.error(
+                "Failed to load categories:",
+                error
+            );
+
+            setError(
+                error.response?.data?.detail ||
+                "Failed to load categories."
+            );
+        }
+    };
+
     useEffect(() => {
         fetchEvents();
+        fetchUsers();
+        fetchCategories();
     }, []);
 
     const totalSeats = events.reduce(
@@ -580,6 +671,26 @@ export default function AdminEvents() {
 
                                         </div>
 
+                                        <div className="mb-3">
+                                            <label className="form-label">
+                                                Select Event Location
+                                            </label>
+
+                                            <MapPicker
+                                                key={editingEvent.id}
+                                                latitude={editingEvent.latitude}
+                                                longitude={editingEvent.longitude}
+                                                onLocationSelect={({ latitude, longitude, location }) =>
+                                                    setEditingEvent({
+                                                        ...editingEvent,
+                                                        latitude,
+                                                        longitude,
+                                                        location,
+                                                    })
+                                                }
+                                            />
+                                        </div>
+
                                         <div className="row">
 
                                             <div className="col-md-6 mb-3">
@@ -589,18 +700,9 @@ export default function AdminEvents() {
 
                                                 <input
                                                     type="number"
-                                                    step="any"
                                                     className="form-control"
                                                     value={editingEvent.latitude ?? ""}
-                                                    onChange={(e) =>
-                                                        setEditingEvent({
-                                                            ...editingEvent,
-                                                            latitude:
-                                                                e.target.value === ""
-                                                                    ? null
-                                                                    : Number(e.target.value),
-                                                        })
-                                                    }
+                                                    readOnly
                                                 />
                                             </div>
 
@@ -611,18 +713,9 @@ export default function AdminEvents() {
 
                                                 <input
                                                     type="number"
-                                                    step="any"
                                                     className="form-control"
                                                     value={editingEvent.longitude ?? ""}
-                                                    onChange={(e) =>
-                                                        setEditingEvent({
-                                                            ...editingEvent,
-                                                            longitude:
-                                                                e.target.value === ""
-                                                                    ? null
-                                                                    : Number(e.target.value),
-                                                        })
-                                                    }
+                                                    readOnly
                                                 />
                                             </div>
 
@@ -816,7 +909,7 @@ export default function AdminEvents() {
                                         </strong>
                                     </div>
 
-                                    <div className="col-md-6 mb-3">
+                                    <div className="mb-3">
                                         <small className="text-muted d-block mb-1">
                                             Latitude
                                         </small>
@@ -915,42 +1008,62 @@ export default function AdminEvents() {
 
                                     <div className="col-md-6 mb-3">
                                         <label className="form-label">
-                                            Organizer ID
+                                            Organizer 
                                         </label>
 
-                                        <input
-                                            type="number"
-                                            className="form-control"
+                                        <select
+                                            className="form-select"
                                             value={newEvent.organizer_id}
                                             onChange={(e) =>
                                                 setNewEvent({
                                                     ...newEvent,
-                                                    organizer_id: Number(
-                                                        e.target.value
-                                                    ),
+                                                    organizer_id: Number(e.target.value),
                                                 })
                                             }
-                                        />
+                                        >
+                                            <option value="">
+                                                Select an organizer
+                                            </option>
+
+                                            {users.map((user) => (
+                                                <option
+                                                    key={user.id}
+                                                    value={user.id}
+                                                >
+                                                    {user.first_name} {user.last_name}
+                                                </option>
+                                            ))}
+                                        </select>
                                     </div>
 
                                     <div className="col-md-6 mb-3">
                                         <label className="form-label">
-                                            Category ID
+                                            Category 
                                         </label>
 
-                                        <input
-                                            type="number"
-                                            className="form-control"
+                                        <select
+                                            className="form-select"
                                             value={newEvent.category_id}
                                             onChange={(e) =>
                                                 setNewEvent({
                                                     ...newEvent,
-                                                    category_id: Number(
-                                                        e.target.value
-                                                    ),
+                                                    category_id: Number(e.target.value),
                                                 })
                                             }
-                                        />
+                                        >
+                                            <option value="">
+                                                Select a category
+                                            </option>
+
+                                            {categories.map((category) => (
+                                                <option
+                                                    key={category.id}
+                                                    value={category.id}
+                                                >
+                                                    {category.name}
+                                                </option>
+                                            ))}
+                                        </select>
                                     </div>
 
                                 </div>
@@ -1058,17 +1171,36 @@ export default function AdminEvents() {
 
                                 <div className="mb-3">
                                     <label className="form-label">
-                                        Image URL
+                                        Event Image
                                     </label>
 
                                     <input
-                                        type="text"
+                                        type="file"
                                         className="form-control"
-                                        value={newEvent.image}
+                                        accept="image/jpeg,image/png,image/webp"
                                         onChange={(e) =>
                                             setNewEvent({
                                                 ...newEvent,
-                                                image: e.target.value,
+                                                image: e.target.files[0] || null,
+                                            })
+                                        }
+                                    />
+                                </div>
+
+                                <div className="mb-3">
+                                    <label className="form-label">
+                                        Select Event Location
+                                    </label>
+
+                                    <MapPicker
+                                        latitude={newEvent.latitude}
+                                        longitude={newEvent.longitude}
+                                        onLocationSelect={({ latitude, longitude, location  }) =>
+                                            setNewEvent({
+                                                ...newEvent,
+                                                latitude,
+                                                longitude,
+                                                location,
                                             })
                                         }
                                     />
@@ -1083,16 +1215,9 @@ export default function AdminEvents() {
 
                                         <input
                                             type="number"
-                                            step="any"
                                             className="form-control"
                                             value={newEvent.latitude}
-                                            onChange={(e) =>
-                                                setNewEvent({
-                                                    ...newEvent,
-                                                    latitude:
-                                                        e.target.value,
-                                                })
-                                            }
+                                            readOnly
                                         />
                                     </div>
 
@@ -1103,16 +1228,9 @@ export default function AdminEvents() {
 
                                         <input
                                             type="number"
-                                            step="any"
                                             className="form-control"
                                             value={newEvent.longitude}
-                                            onChange={(e) =>
-                                                setNewEvent({
-                                                    ...newEvent,
-                                                    longitude:
-                                                        e.target.value,
-                                                })
-                                            }
+                                            readOnly
                                         />
                                     </div>
 

@@ -214,8 +214,8 @@ export default function EventDetails() {
 
                                     <img
                                         src={
-                                            event.image ||
-                                            "https://via.placeholder.com/800x500?text=Event"
+                                            event.image ? `http://127.0.0.1:8000${event.image}`
+                                            : "https://via.placeholder.com/800x500?text=Event"
                                         }
                                         alt={event.title}
                                         className="event-details-image"
@@ -241,7 +241,8 @@ export default function EventDetails() {
                                         <span>
                                             Organized by{" "}
                                             <strong>
-                                                EventHub Pro
+                                                {event.organizer ? `${event.organizer.first_name} ${event.organizer.last_name}`
+                                                : "Unknown Organizer"}
                                             </strong>
                                         </span>
 
@@ -418,7 +419,8 @@ export default function EventDetails() {
                                     </small>
 
                                     <strong>
-                                        EventHub Pro
+                                        {event.organizer ? `${event.organizer.first_name} ${event.organizer.last_name}`
+                                        : "Unknown Organizer"}
                                     </strong>
 
                                     <span>

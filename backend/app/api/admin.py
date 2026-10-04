@@ -14,7 +14,11 @@ from app.crud.admin_registration import (
     get_admin_registration,
 )
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status,  UploadFile, File
+import os
+import uuid
+from pathlib import Path
+
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -84,6 +88,41 @@ def get_current_admin(
 
     return current_user
 
+# =========================
+# Admin Image Upload
+# =========================
+
+@router.post("/upload/event-image")
+def upload_event_image(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_admin),
+):
+    allowed_types = {
+        "image/jpeg": ".jpg",
+        "image/png": ".png",
+        "image/webp": ".webp",
+    }
+
+    if file.content_type not in allowed_types:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only JPG, PNG, and WEBP images are allowed.",
+        )
+
+    upload_directory = Path("uploads/events")
+    upload_directory.mkdir(parents=True, exist_ok=True)
+
+    file_extension = allowed_types[file.content_type]
+    file_name = f"{uuid.uuid4()}{file_extension}"
+
+    file_path = upload_directory / file_name
+
+    with open(file_path, "wb") as buffer:
+        buffer.write(file.file.read())
+
+    return {
+        "image_url": f"/uploads/events/{file_name}"
+    }
 
 # =========================
 # Dashboard
