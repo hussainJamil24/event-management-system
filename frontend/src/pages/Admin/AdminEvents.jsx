@@ -11,6 +11,8 @@ export default function AdminEvents() {
     const [editingEvent, setEditingEvent] = useState(null);
     const [saving, setSaving] = useState(false);
 
+    const [viewingEvent, setViewingEvent] = useState(null);
+
     const [showCreateModal, setShowCreateModal] = useState(false);
 
     const emptyEvent = {
@@ -90,6 +92,36 @@ export default function AdminEvents() {
         } finally {
             setCreating(false);
         }
+    };
+
+    const handleView = async (eventId) => {
+        try {
+            setError("");
+
+            const token = localStorage.getItem("token");
+
+            const response = await api.get(
+                `/admin/events/${eventId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            setViewingEvent(response.data);
+
+        } catch (error) {
+            console.error(
+                "Failed to load event:",
+                error
+            );
+
+            setError(
+                error.response?.data?.detail ||
+                "Failed to load event."
+            );
+        } 
     };
 
     const handleEdit = (event) => {
@@ -414,6 +446,7 @@ export default function AdminEvents() {
                                                     type="button"
                                                     className="admin-action-button"
                                                     title="View event"
+                                                    onClick={() => handleView(event.id)}
                                                 >
                                                     <i className="bi bi-eye"></i>
                                                 </button>
@@ -664,6 +697,158 @@ export default function AdminEvents() {
                                 </div>
                             </div>
                         )}
+                    </div>
+                )}
+
+                {viewingEvent && (
+                    <div className="admin-modal-backdrop">
+                        <div className="admin-modal">
+
+                            <div className="admin-modal-header">
+                                <div>
+                                    <h4>Event Details</h4>
+                                    <p>
+                                        View event information.
+                                    </p>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    className="admin-modal-close"
+                                    onClick={() => setViewingEvent(null)}
+                                >
+                                    <i className="bi bi-x-lg"></i>
+                                </button>
+                            </div>
+
+                            <div className="admin-modal-body">
+
+                                {/* event header */}
+                                <div className="mb-4">
+                                    <h5 className="mb-1">
+                                        {viewingEvent.title}
+                                    </h5>
+
+                                    <p className="text-muted mb-0">
+                                        {viewingEvent.description || "No description available."}
+                                    </p>
+                                </div>
+
+                                {/* event information */}
+                                <div className="row">
+
+                                    <div className="col-6 mb-3">
+                                        <small className="text-muted d-block mb-1">
+                                            Category
+                                        </small>
+                                        <strong>
+                                            {viewingEvent.category?.name || "—"}
+                                        </strong>
+                                    </div>
+
+                                    <div className="col-md-6 mb-3">
+                                        <small className="text-muted d-block mb-1">
+                                            Organizer
+                                        </small>
+                                        <strong>
+                                            {viewingEvent.organizer?.first_name
+                                                ? `${viewingEvent.organizer.first_name} ${viewingEvent.organizer.last_name}`
+                                                : `User #${viewingEvent.organizer_id}`}
+                                        </strong>
+                                    </div>
+
+                                    <div className="col-md-6 mb-3">
+                                        <small className="text-muted d-block mb-1">
+                                            Date
+                                        </small>
+                                        <strong>
+                                            {viewingEvent.event_date}
+                                        </strong>
+                                    </div>
+
+                                    <div className="col-md-6 mb-3">
+                                        <small className="text-muted d-block mb-1">
+                                            Time
+                                        </small>
+                                        <strong>
+                                            {viewingEvent.start_time} - {viewingEvent.end_time}
+                                        </strong>
+                                    </div>
+
+                                    <div className="col-md-6 mb-3">
+                                        <small className="text-muted d-block mb-1">
+                                            Location
+                                        </small>
+                                        <strong>
+                                            {viewingEvent.location || "—"}
+                                        </strong>
+                                    </div>
+
+                                    <div className="col-md-6 mb-3">
+                                        <small className="text-muted d-block mb-1">
+                                            Status
+                                        </small>
+
+                                        <span
+                                            className={`admin-status-badge ${getStatusClass(
+                                                viewingEvent.status
+                                            )}`}
+                                        >
+                                            {viewingEvent.status}
+                                        </span>
+                                    </div>
+
+                                    <div className="col-md-6 mb-3">
+                                        <small className="text-muted d-block mb-1">
+                                            Available Seats
+                                        </small>
+                                        <strong>
+                                            {viewingEvent.available_seats}
+                                        </strong>
+                                    </div>
+
+                                    <div className="col-md-6 mb-3">
+                                        <small className="text-muted d-block mb-1">
+                                            Maximum Capacity
+                                        </small>
+                                        <strong>
+                                            {viewingEvent.max_capacity}
+                                        </strong>
+                                    </div>
+
+                                    <div className="col-md-6 mb-3">
+                                        <small className="text-muted d-block mb-1">
+                                            Latitude
+                                        </small>
+                                        <strong>
+                                            {viewingEvent.latitude ?? "—"}
+                                        </strong>
+                                    </div>
+
+                                    <div className="col-md-6 mb-3">
+                                        <small className="text-muted d-block mb-1">
+                                            Longitude
+                                        </small>
+                                        <strong>
+                                            {viewingEvent.longitude ?? "—"}
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div className="admin-modal-footer">
+                                <button
+                                    type="button"
+                                    className="btn btn-light"
+                                    onClick={() => setViewingEvent(null)}
+                                >
+                                    Close
+                                </button>
+                            </div>
+
+                        </div>
                     </div>
                 )}
 

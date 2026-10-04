@@ -3,6 +3,9 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.schemas.category import CategoryResponse
+from app.schemas.user import UserResponse
+
 
 class EventBase(BaseModel):
     title: str = Field(
@@ -102,10 +105,16 @@ class EventUpdate(BaseModel):
 class EventResponse(EventBase):
     latitude: float | None = None
     longitude: float | None = None
-    model_config = ConfigDict(from_attributes=True)
 
     id: int
     organizer_id: int
     available_seats: int
     created_at: datetime
     updated_at: datetime
+
+    category: CategoryResponse
+    organizer: UserResponse
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )
