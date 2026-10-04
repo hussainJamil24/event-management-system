@@ -1,4 +1,4 @@
-export default function HeroSection({ filters, onFilterChange, onClearFilters }) {
+export default function HeroSection({ filters, onFilterChange, onClearFilters, categories }) {
     const handleSubmit = (event) => {
         event.preventDefault();
     };
@@ -36,27 +36,32 @@ export default function HeroSection({ filters, onFilterChange, onClearFilters })
                                 <div className="event-cont">
                                     <label className="fw-semibold">CATEGORY</label>
                                     <select
-                                        value={filters.category}
-                                        onChange={(event) => 
-                                            onFilterChange( "category", event.target.value)
+                                        value={
+                                            filters.categories.length === 1
+                                                ? filters.categories[0]
+                                                : ""
+                                        }
+                                        onChange={(event) =>
+                                            onFilterChange(
+                                                "categories",
+                                                event.target.value
+                                                    ? [event.target.value]
+                                                    : []
+                                            )
                                         }
                                     >
                                         <option value="">
                                             All Categories
                                         </option>
 
-                                        <option value="Technology">
-                                            Technology
-                                        </option>
-
-                                        <option value="Business">
-                                            Business
-                                        </option>
-
-                                        <option  value="Marketing">
-                                            Marketing
-                                        </option>
-
+                                        {categories.map((category) => (
+                                            <option
+                                                key={category.id}
+                                                value={category.name}
+                                            >
+                                                {category.name}
+                                            </option>
+                                        ))}
                                     </select>
                                 </div>
                             </div>

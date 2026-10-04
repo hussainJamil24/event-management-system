@@ -124,6 +124,7 @@ export default function Home() {
             <HeroSection filters={filters}
                 onFilterChange={handleFilterChange}
                 onClearFilters={handleClearFilters}
+                categories={categories}
              />
 
             {/* events section */}
