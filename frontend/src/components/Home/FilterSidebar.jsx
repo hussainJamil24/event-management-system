@@ -1,4 +1,4 @@
-export default function FilterSidebar({filters, onFilterChange}) {
+export default function FilterSidebar({filters, onFilterChange, categories}) {
     const handleCategoryChange = (category) => {
         const currentCategories = filters.categories;
 
@@ -31,38 +31,26 @@ export default function FilterSidebar({filters, onFilterChange}) {
                 <div className="filter-group">
                     <label className="filter-label fw-lighter fs-5 mb-2">CATEGORIES</label>
 
-                    <div className="form-check">
-                        <input  className="form-check-input" type="checkbox" id="technology"
-                            checked={filters.categories.includes("Technology")}
-                            onChange={() => handleCategoryChange("Technology")}
-                        />
-                        <label  className="form-check-label" htmlFor="technology">Technology</label>
-                    </div>
+                    {categories.map((category) => (
+                        <div className="form-check" key={category.id}>
+                            <input
+                                className="form-check-input"
+                                type="checkbox"
+                                id={`category-${category.id}`}
+                                checked={filters.categories.includes(category.name)}
+                                onChange={() =>
+                                    handleCategoryChange(category.name)
+                                }
+                            />
 
-                    <div className="form-check">
-                        <input className="form-check-input" type="checkbox" id="design"
-                            checked={filters.categories.includes("Design")}
-                            onChange={() => handleCategoryChange("Design")}
-                        />
-                        <label  className="form-check-label" htmlFor="design">Design</label>
-
-                    </div>
-
-                    <div className="form-check">
-                        <input className="form-check-input" type="checkbox" id="marketing"
-                            checked={filters.categories.includes("Marketing")}
-                            onChange={() => handleCategoryChange("Marketing")}
-                        />
-                        <label className="form-check-label" htmlFor="marketing">Marketing</label>
-                    </div>
-
-                    <div className="form-check">
-                        <input className="form-check-input" type="checkbox" id="finance"
-                            checked={filters.categories.includes("Finance")}
-                            onChange={() => handleCategoryChange("Finance")}
-                        />
-                        <label className="form-check-label" htmlFor="finance">Finance</label>
-                    </div>
+                            <label
+                                className="form-check-label"
+                                htmlFor={`category-${category.id}`}
+                            >
+                                {category.name}
+                            </label>
+                        </div>
+                    ))}
 
                 </div>
 

@@ -24,6 +24,8 @@ export default function Home() {
     const [error, setError] = useState("");
     const [viewMode, setViewMode] = useState("grid");
 
+    const [categories, setCategories] = useState([]);
+
     // Fetch  events
     const fetchEvents = async (currentFilters) => {
         try {
@@ -76,10 +78,24 @@ export default function Home() {
 
     };
 
+    const fetchCategories = async () => {
+        try {
+            const response = await api.get("/categories/");
+            setCategories(response.data);
+        } catch (error) {
+            console.error("Failed to fetch categories:", error);
+            setCategories([]);
+        }
+    };
+
     // Load all events when page opens
     useEffect(() => {
         fetchEvents(filters);
     }, [filters]);
+
+    useEffect(() => {
+        fetchCategories();
+    }, []);
 
     // Update filter
     const handleFilterChange = (name, value) => {
@@ -118,6 +134,7 @@ export default function Home() {
                         <FilterSidebar 
                             filters={filters}
                             onFilterChange={handleFilterChange}
+                            categories={categories}
                         />
                     </div>
 
