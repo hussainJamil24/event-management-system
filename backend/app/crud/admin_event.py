@@ -114,9 +114,11 @@ def update_admin_event(
     return db_event
 
 
-def delete_admin_event(
-    db: Session,
-    db_event: Event,
-):
+def delete_admin_event(db, db_event):
+    if db_event.registrations:
+        raise ValueError(
+            "Cannot delete an event that has registrations."
+        )
+
     db.delete(db_event)
     db.commit()

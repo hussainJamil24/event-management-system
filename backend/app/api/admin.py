@@ -254,10 +254,17 @@ def delete_event_as_admin(
             detail="Event not found.",
         )
 
-    delete_admin_event(
-        db=db,
-        db_event=event,
-    )
+    try:
+        delete_admin_event(
+            db=db,
+            db_event=event,
+        )
+
+    except ValueError as error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(error),
+        )
 
     return {
         "message": "Event deleted successfully."
